@@ -1166,8 +1166,6 @@ select results_eq($$select
 
     'data in ggircs_swrs.organisation === ggircs.organisation');
 
-select * from ggircs_swrs.organisation;
-
 -- Data in ggircs_swrs.activity === data in ggircs.activity
 select results_eq($$select
                       ghgr_import_id,
