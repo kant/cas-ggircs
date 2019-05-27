@@ -779,11 +779,13 @@ select tables_are('ggircs'::name, ARRAY[
     'descriptor'::name,
     'measured_emission_factor'::name
     ],
-    $$Schema ggircs has tables [
+    $$
+    Schema ggircs has tables [
                              report, organisation, facility, activity,
                              unit, identifier, naics. emission, attributable_emission, final_report,
                              fuel, permit, parent_organisation, contact, address
-                             descriptor, measured_emission_factor $$
+                             descriptor, measured_emission_factor
+    $$
 );
 
 -- Test all tables have primary key
@@ -848,10 +850,10 @@ select is_empty($$select * from ggircs.attributable_emission where gas_type='CO2
 -- Test validity of FK relations
 -- Emission -> Fuel
 select results_eq(
-    $$select distinct(fuel.ghgr_import_id) from ggircs.emission
-      join ggircs.fuel
-      on
-        emission.fuel_id = fuel.id
+    $$
+    select distinct(fuel.ghgr_import_id) from ggircs.emission
+    join ggircs.fuel
+    on emission.fuel_id = fuel.id
     $$,
 
     'select distinct(ghgr_import_id) from ggircs.fuel',
@@ -861,10 +863,10 @@ select results_eq(
 
 -- Fuel -> Unit
 select results_eq(
-    $$select distinct(fuel.ghgr_import_id) from ggircs.fuel
-      join ggircs.unit
-      on
-        fuel.unit_id = unit.id
+    $$
+    select distinct(fuel.ghgr_import_id) from ggircs.fuel
+    join ggircs.unit
+    on fuel.unit_id = unit.id
     $$,
 
     'select distinct(ghgr_import_id) from ggircs.unit',
@@ -874,10 +876,10 @@ select results_eq(
 
 -- Unit -> Activity
 select results_eq(
-    $$select distinct(activity.ghgr_import_id) from ggircs.unit
-      join ggircs.activity
-      on
-        unit.activity_id = activity.id
+    $$
+    select distinct(activity.ghgr_import_id) from ggircs.unit
+    join ggircs.activity
+    on unit.activity_id = activity.id
     $$,
 
     'select distinct(ghgr_import_id) from ggircs.activity',
@@ -887,10 +889,10 @@ select results_eq(
 
 -- Descriptor -> Activity
 select results_eq(
-    $$select distinct(activity.ghgr_import_id) from ggircs.descriptor
-      join ggircs.activity
-      on
-        descriptor.activity_id = activity.id
+    $$
+    select distinct(activity.ghgr_import_id) from ggircs.descriptor
+    join ggircs.activity
+    on descriptor.activity_id = activity.id
     $$,
 
     'select distinct(ghgr_import_id) from ggircs.activity',
@@ -900,11 +902,12 @@ select results_eq(
 
 -- Activity -> Report
 select results_eq(
-    $$select distinct(report.ghgr_import_id) from ggircs.activity
-      join ggircs.report
-      on
-        activity.report_id = report.id
-        order by report.ghgr_import_id asc
+    $$
+    select distinct(report.ghgr_import_id) from ggircs.activity
+    join ggircs.report
+    on
+      activity.report_id = report.id
+      order by report.ghgr_import_id asc
     $$,
 
     'select distinct(ghgr_import_id) from ggircs.report order by ghgr_import_id asc',
@@ -914,10 +917,10 @@ select results_eq(
 
 -- Address -> Organisation
 select results_eq(
-    $$select distinct(organisation.ghgr_import_id) from ggircs.address
-      join ggircs.organisation
-      on
-        address.organisation_id = organisation.id
+    $$
+    select distinct(organisation.ghgr_import_id) from ggircs.address
+    join ggircs.organisation
+    on address.organisation_id = organisation.id
     $$,
 
     'select ghgr_import_id from ggircs.organisation',
@@ -927,10 +930,10 @@ select results_eq(
 
 -- Address -> Parent Organisation
 select results_eq(
-    $$select distinct(parent_organisation.ghgr_import_id) from ggircs.address
-      join ggircs.parent_organisation
-      on
-        address.parent_organisation_id = parent_organisation.id
+    $$
+    select distinct(parent_organisation.ghgr_import_id) from ggircs.address
+    join ggircs.parent_organisation
+    on address.parent_organisation_id = parent_organisation.id
     $$,
 
     'select ghgr_import_id from ggircs.parent_organisation',
@@ -940,10 +943,10 @@ select results_eq(
 
 -- Contact -> Address
 select results_eq(
-    $$select distinct(address.ghgr_import_id) from ggircs.contact
-      join ggircs.address
-      on
-        contact.address_id = address.id
+    $$
+    select distinct(address.ghgr_import_id) from ggircs.contact
+    join ggircs.address
+    on contact.address_id = address.id
     $$,
 
     'select distinct(ghgr_import_id) from ggircs.address',
@@ -953,10 +956,10 @@ select results_eq(
 
 -- Organisation -> Parent Organisation
 select results_eq(
-    $$select distinct(parent_organisation.ghgr_import_id) from ggircs.organisation
-      join ggircs.parent_organisation
-      on
-        organisation.parent_organisation_id = parent_organisation.id
+    $$
+    select distinct(parent_organisation.ghgr_import_id) from ggircs.organisation
+    join ggircs.parent_organisation
+    on organisation.parent_organisation_id = parent_organisation.id
     $$,
 
     'select ghgr_import_id from ggircs.parent_organisation',
@@ -966,11 +969,12 @@ select results_eq(
 
 -- Attributable Emission -> Fuel
 select results_eq(
-    $$select fuel.fuel_type from ggircs.attributable_emission
-      join ggircs.fuel
-      on
-        attributable_emission.fuel_id = fuel.id
-        order by fuel.ghgr_import_id
+    $$
+    select fuel.fuel_type from ggircs.attributable_emission
+    join ggircs.fuel
+    on
+      attributable_emission.fuel_id = fuel.id
+      order by fuel.ghgr_import_id
     $$,
 
     'select fuel_type from ggircs.fuel where ghgr_import_id=2 and fuel_idx = 1',
@@ -980,11 +984,12 @@ select results_eq(
 
 -- Activity -> Facility
 select results_eq(
-    $$select distinct(facility.ghgr_import_id) from ggircs.activity
-      join ggircs.facility
-      on
-        activity.facility_id = facility.id
-        order by ghgr_import_id
+    $$
+    select distinct(facility.ghgr_import_id) from ggircs.activity
+    join ggircs.facility
+    on
+      activity.facility_id = facility.id
+      order by ghgr_import_id
     $$,
 
     'select ghgr_import_id from ggircs.facility order by ghgr_import_id',
@@ -994,11 +999,12 @@ select results_eq(
 
 -- Facility -> Report
 select results_eq(
-    $$select report.swrs_facility_id from ggircs.facility
-      join ggircs.report
-      on
-        facility.report_id = report.id
-        order by report.ghgr_import_id
+    $$
+    select report.swrs_facility_id from ggircs.facility
+    join ggircs.report
+    on
+      facility.report_id = report.id
+      order by report.ghgr_import_id
     $$,
 
     'select swrs_facility_id from ggircs.report order by ghgr_import_id',
@@ -1008,11 +1014,12 @@ select results_eq(
 
 -- Address -> Facility
 select results_eq(
-    $$select distinct(facility.ghgr_import_id) from ggircs.address
-      join ggircs.facility
-      on
-        address.facility_id = facility.id
-        order by ghgr_import_id
+    $$
+    select distinct(facility.ghgr_import_id) from ggircs.address
+    join ggircs.facility
+    on
+      address.facility_id = facility.id
+      order by ghgr_import_id
     $$,
 -- --
     'select ghgr_import_id from ggircs.facility order by ghgr_import_id',
@@ -1022,11 +1029,12 @@ select results_eq(
 
 -- Contact -> Facility
 select results_eq(
-    $$select distinct(facility.ghgr_import_id) from ggircs.contact
-      join ggircs.facility
-      on
-        contact.facility_id = facility.id
-        order by ghgr_import_id
+    $$
+    select distinct(facility.ghgr_import_id) from ggircs.contact
+    join ggircs.facility
+    on
+      contact.facility_id = facility.id
+      order by ghgr_import_id
     $$,
 
     'select ghgr_import_id from ggircs.facility order by ghgr_import_id',
@@ -1036,11 +1044,12 @@ select results_eq(
 
 -- Identifier -> Facility
 select results_eq(
-    $$select distinct(facility.ghgr_import_id) from ggircs.identifier
-      join ggircs.facility
-      on
-        identifier.facility_id = facility.id
-        order by ghgr_import_id
+    $$
+    select distinct(facility.ghgr_import_id) from ggircs.identifier
+    join ggircs.facility
+    on
+      identifier.facility_id = facility.id
+      order by ghgr_import_id
     $$,
 
     'select ghgr_import_id from ggircs.facility order by ghgr_import_id',
@@ -1050,11 +1059,12 @@ select results_eq(
 
 -- NAICS -> Facility
 select results_eq(
-    $$select distinct(facility.ghgr_import_id) from ggircs.naics
-      join ggircs.facility
-      on
-        naics.facility_id = facility.id
-        order by ghgr_import_id
+    $$
+    select distinct(facility.ghgr_import_id) from ggircs.naics
+    join ggircs.facility
+    on
+      naics.facility_id = facility.id
+      order by ghgr_import_id
     $$,
 
     'select ghgr_import_id from ggircs.facility order by ghgr_import_id',
@@ -1064,11 +1074,12 @@ select results_eq(
 
 -- Permit -> Facility
 select results_eq(
-    $$select facility.ghgr_import_id from ggircs.permit
-      join ggircs.facility
-      on
-        permit.facility_id = facility.id
-        order by ghgr_import_id
+    $$
+    select facility.ghgr_import_id from ggircs.permit
+    join ggircs.facility
+    on
+      permit.facility_id = facility.id
+      order by ghgr_import_id
     $$,
 
     'select ghgr_import_id from ggircs.facility order by ghgr_import_id',
@@ -1078,10 +1089,10 @@ select results_eq(
 
 -- Measured Emission Factor -> Fuel
 select results_eq(
-    $$select distinct(fuel.ghgr_import_id) from ggircs.measured_emission_factor
-      join ggircs.fuel
-      on
-        measured_emission_factor.fuel_id = fuel.id
+    $$
+    select distinct(fuel.ghgr_import_id) from ggircs.measured_emission_factor
+    join ggircs.fuel
+    on measured_emission_factor.fuel_id = fuel.id
     $$,
 
     'select distinct(ghgr_import_id) from ggircs.fuel',
@@ -1091,7 +1102,8 @@ select results_eq(
 
 /** Test data transferred from ggircs_swrs to ggircs properly **/
 -- Data in ggircs_swrs.report === data in ggircs_report
-select results_eq($$select
+select results_eq($$
+                  select
                       ghgr_import_id,
                       source_xml::text,
                       imported_at,
@@ -1113,7 +1125,8 @@ select results_eq($$select
                   order by ghgr_import_id
                   $$,
 
-                 $$select
+                 $$
+                 select
                       ghgr_import_id,
                       source_xml::text,
                       imported_at,
@@ -1138,7 +1151,8 @@ select results_eq($$select
     'data in ggircs_swrs.report === ggircs.report');
 
 -- Data in ggircs_swrs.organisation === data in ggircs.organisation
-select results_eq($$select
+select results_eq($$
+                  select
                       ghgr_import_id,
                       swrs_organisation_id,
                       business_legal_name,
@@ -1151,7 +1165,8 @@ select results_eq($$select
                   order by ghgr_import_id
                   $$,
 
-                 $$select
+                 $$
+                 select
                       ghgr_import_id,
                       swrs_organisation_id,
                       business_legal_name,
@@ -1167,7 +1182,8 @@ select results_eq($$select
     'data in ggircs_swrs.organisation === ggircs.organisation');
 
 -- Data in ggircs_swrs.activity === data in ggircs.activity
-select results_eq($$select
+select results_eq($$
+                  select
                       ghgr_import_id,
                       process_idx,
                       sub_process_idx,
@@ -1179,7 +1195,8 @@ select results_eq($$select
                   order by ghgr_import_id, process_idx, sub_process_idx, activity_name asc
                   $$,
 
-                 $$select
+                 $$
+                 select
                       ghgr_import_id,
                       process_idx,
                       sub_process_idx,
@@ -1195,7 +1212,8 @@ select results_eq($$select
 
 -- Data in ggircs_swrs.unit === data in ggircs.unit
 select results_eq(
-              $$select
+              $$
+              select
                   ghgr_import_id,
                   activity_name,
                   process_idx,
@@ -1227,7 +1245,8 @@ select results_eq(
                  asc
               $$,
 
-              $$select
+              $$
+              select
                   ghgr_import_id,
                   activity_name,
                   process_idx,
@@ -1263,7 +1282,8 @@ select results_eq(
 
 -- Data in ggircs_swrs.identifier === data in ggircs.identifier
 select results_eq(
-              $$select
+              $$
+              select
                   ghgr_import_id,
                   swrs_facility_id,
                   path_context,
@@ -1279,7 +1299,8 @@ select results_eq(
                  asc
               $$,
 
-              $$select
+              $$
+              select
                   ghgr_import_id,
                   swrs_facility_id,
                   path_context,
@@ -1299,7 +1320,8 @@ select results_eq(
 
 -- Data in ggircs_swrs.naics === data in ggircs.naics
 select results_eq(
-              $$select
+              $$
+              select
                   ghgr_import_id,
                   swrs_facility_id,
                   path_context,
@@ -1316,7 +1338,8 @@ select results_eq(
                  asc
               $$,
 
-              $$select
+              $$
+              select
                   ghgr_import_id,
                   swrs_facility_id,
                   path_context,
@@ -1337,7 +1360,8 @@ select results_eq(
 
 -- Data in ggircs_swrs.emission === data in ggircs.emission
 select results_eq(
-              $$select
+              $$
+              select
                 emission.ghgr_import_id,
                 activity_name,
                 sub_activity_name,
@@ -1374,7 +1398,8 @@ select results_eq(
                 emission_idx asc
               $$,
 
-              $$select
+              $$
+              select
                   ghgr_import_id,
                   activity_name,
                   sub_activity_name,
@@ -1422,7 +1447,8 @@ select results_eq(
 
 -- Data in ggircs_swrs.fuel === data in ggircs.fuel
 select results_eq(
-              $$select
+              $$
+              select
                   ghgr_import_id,
                   activity_name,
                   sub_activity_name,
@@ -1463,7 +1489,8 @@ select results_eq(
                  asc
               $$,
 
-              $$select
+              $$
+              select
                   ghgr_import_id,
                   activity_name,
                   sub_activity_name,
@@ -1508,7 +1535,8 @@ select results_eq(
 
 -- Data in ggircs_swrs.permit === data in ggircs.permit
 select results_eq(
-              $$select
+              $$
+              select
                   ghgr_import_id,
                   path_context,
                   permit_idx,
@@ -1522,7 +1550,8 @@ select results_eq(
                  asc
               $$,
 
-              $$select
+              $$
+              select
                   ghgr_import_id,
                   path_context,
                   permit_idx,
@@ -1540,7 +1569,8 @@ select results_eq(
 
 -- Data in ggircs_swrs.parent_organisation === data in ggircs.parent_organisation
 select results_eq(
-              $$select
+              $$
+              select
                   ghgr_import_id,
                   path_context,
                   parent_organisation_idx,
@@ -1558,7 +1588,8 @@ select results_eq(
                  asc
               $$,
 
-              $$select
+              $$
+              select
                   ghgr_import_id,
                   path_context,
                   parent_organisation_idx,
@@ -1580,7 +1611,8 @@ select results_eq(
 
 -- Data in ggircs_swrs.contact === data in ggircs.contact
 select results_eq(
-              $$select
+              $$
+              select
                   ghgr_import_id,
                   path_context,
                   contact_idx,
@@ -1602,7 +1634,8 @@ select results_eq(
                  asc
               $$,
 
-              $$select
+              $$
+              select
                   ghgr_import_id,
                   path_context,
                   contact_idx,
@@ -1628,7 +1661,8 @@ select results_eq(
 
 -- Data in ggircs_swrs.address === data in ggircs.address
 select results_eq(
-              $$select
+              $$
+              select
                   ghgr_import_id,
                   swrs_facility_id,
                   swrs_organisation_id,
@@ -1677,7 +1711,8 @@ select results_eq(
                  asc
               $$,
 
-              $$select
+              $$
+              select
                   ghgr_import_id,
                   swrs_facility_id,
                   swrs_organisation_id,
@@ -1730,7 +1765,8 @@ select results_eq(
 
 -- Data in ggircs_swrs.descriptor === data in ggircs.descriptor
 select results_eq(
-              $$select
+              $$
+              select
                     ghgr_import_id,
                     process_idx,
                     sub_process_idx,
@@ -1758,7 +1794,8 @@ select results_eq(
                  asc
               $$,
 
-              $$select
+              $$
+              select
                     ghgr_import_id,
                     process_idx,
                     sub_process_idx,
@@ -1791,7 +1828,8 @@ select results_eq(
 
 -- Data in ggircs_swrs.measured_emission_factor === data in ggircs.measured_emission_factor
 select results_eq(
-              $$select
+              $$
+              select
                 ghgr_import_id,
                 activity_name,
                 sub_activity_name,
@@ -1821,7 +1859,8 @@ select results_eq(
                 measured_emission_factor_idx
               $$,
 
-              $$select
+              $$
+              select
                   ghgr_import_id,
                   activity_name,
                   sub_activity_name,
